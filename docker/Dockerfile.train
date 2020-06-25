@@ -1,0 +1,26 @@
+FROM continuumio/miniconda
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install make
+
+# Adding Certifcate to access internet from within the container
+RUN mkdir /cert
+COPY cert/z-root.pem /cert/
+ENV REQUESTS_CA_BUNDLE=/cert/z-root.pem
+ENV SSL_CERT_FILE=/cert/z-root.pem
+RUN mkdir /usr/local/share/ca-certificates/corp
+RUN cp /cert/z-root.pem /usr/local/share/ca-certificates/corp/z-root.crt
+RUN chmod 644 /usr/local/share/ca-certificates/corp/z-root.crt
+RUN update-ca-certificates
+
+# Setting Python environment and installing required pacakges
+ADD conda_env.yml /tmp/conda_env.yml
+RUN conda env create -f /tmp/conda_env.yml
+# Pull the environment name out of the environment.yml
+RUN echo "source activate $(head -1 /tmp/conda_env.yml | cut -d' ' -f2)" > ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/conda_env.yml | cut -d' ' -f2)/bin:$PATH
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+WORKDIR /work
+CMD ["bash"]

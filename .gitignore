@@ -1,0 +1,36 @@
+# emacs
+*~
+
+# compiled
+*.pyc
+
+# IntelliJ
+.idea
+*.iml
+
+# model
+#model
+
+# data
+data
+
+# notebook
+notebook/.ipynb_checkpoints
+
+
+__pycache__/
+
+# VS code
+.vscode/
+.vscode/settings.json
+
+# Datasets 
+pet_data/
+
+
+# macOs 
+.DS_Store
+logs/.DS_Store
+
+# misc
+download_credentials.json
