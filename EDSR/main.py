@@ -135,7 +135,8 @@ def show_one_model_results(weight_path, scale=scale):
     # show HR, LR, SR images from a trained model
     _, _, _, val_img_path = get_data_gen()
     model = load_edsr_weight(weight_path = weight_path, crop_size=None)
-    utils.predict_and_show(val_img_path[:5], model=model, scale=scale, multi_255=True)
+    utils.predict_and_show(val_img_path[:5], model=model, scale=scale, 
+                           keep_dim = False, multi_255 = True)
 
 
 def compare_two_models_results(weight_path1, weight_path2, scale=scale):
@@ -143,6 +144,7 @@ def compare_two_models_results(weight_path1, weight_path2, scale=scale):
     _, _, _, val_img_path = get_data_gen()
     model1 = load_edsr_weight(weight_path = weight_path1, crop_size=None)
     model2 = load_edsr_weight(weight_path = weight_path2, crop_size=None)
-    utils.compare_two_models(val_img_path[2:7], model1, model2, scale=scale, SRCNN=False, multi_255=True, show_patch=True)
+    utils.compare_two_models(val_img_path[2:7], model1, model2, scale=scale,
+                             keep_dim=False, multi_255=True, show_patch=True)
 
 

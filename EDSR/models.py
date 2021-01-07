@@ -60,10 +60,10 @@ def pixel_shuffle(scale):
     return lambda x: tf.nn.depth_to_space(x, scale)
 
 
-def normalize(x, DIV2K_RGB_MEAN=[0,0,0]):
-    # return (x - DIV2K_RGB_MEAN) / 127.5
+def normalize(x, RGB_MEAN=[0,0,0]):
+    # return (x - RGB_MEAN) / 127.5
     return x
 
-def denormalize(x, DIV2K_RGB_MEAN=[0,0,0]):
-    # return x * 127.5 + DIV2K_RGB_MEAN
+def denormalize(x, RGB_MEAN=[0,0,0]):
+    # return x * 127.5 + RGB_MEAN
     return x
