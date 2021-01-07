@@ -5,7 +5,7 @@
 This repo contains the code to carry out the following experimentations:
 
 - EDSR model trained with L1 loss produces better results(measured by SSIM) than that trained with L2 loss.
-- EDSR model finetuned with perceptual loss and MAE produces results that are more visually pleasing, though their SSIM is lower.
+- EDSR model finetuned with a mixture of perceptual loss and MAE loss produces results with lower SSIMs but are more visually pleasing.
 
 ### Data
 
@@ -17,12 +17,12 @@ EDSR model trained using L1 pixel loss.
 
 ![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/EDSR_MAE.png)
 
-EDSR model trained using perceptual loss.
+EDSR model finetuned using L1 pixel and perceptual loss.
 
 ![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/EDSR_perceptual.png)
 
-Comparison of the two EDSR models(L1 pixel and perceptual loss).
-Note that though EDSR model trained using L1 pixel gives a higher SSIM, it does not produce images with as much real texture. e.g. cat whiskers, dog fur.
+Comparison of the two EDSR models(L1 pixel and perceptual loss) above.
+Note that though EDSR model trained using L1 pixel gives higher SSIMs, it does not produce images with as much real texture. e.g. cat whiskers, dog fur.
 
 ![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/comparison.png)
 
@@ -64,6 +64,7 @@ weight_path2 = os.path.join('../model', '{}.h5'.format(config.FINETUNED_MODEL_NA
 
 main.show_one_model_results(weight_path=weight_path2)
 # compare the prediction results from two EDSR models, one trained on L1 pixel loss, the other trained on perceptual loss and L1 pixel loss
-main.compare_two_models_results(weight_path1=weight_path1, weight_path2=weight_path2)
+main.compare_two_models_results(weight_path1=weight_path1, weight_path2=weight_path2, keep_dim=False, 
+                                show_ori_img=True, multi_255=True, show_patch=True)
 
 ```
