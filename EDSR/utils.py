@@ -50,21 +50,21 @@ def show_batch_imgs(idx, demo_ori_img, demo_lr_img, num_col=2, num_row=1, figsiz
 
 
 def show_pred(idx, demo_ori_img, demo_lr_img, demo_pred_img,
-              title1='LR(SSIM)', title2='ground truth', title3='SR(SSIM)',
+              title1='ground truth', title2='LR(SSIM)', title3='SR(SSIM)',
               num_col=3, num_row=1, figsize = (30, 10)):
     plt.figure(figsize=figsize) 
     truth = demo_ori_img[idx]
     lr = demo_lr_img[idx]
     sr = demo_pred_img[idx]
     
-    images = [lr, truth, sr]
+    images = [truth, lr, sr]
     # increase the size of lr again as both PSNR and SSIM requires images to be of the same dimension
     h, w, _ = truth.shape
     lr = cv2.resize(lr, (w, h))
     lr_ssim = get_SSIM(truth, lr)
     pred_ssim = get_SSIM(truth, sr)
-    titles = [title1 + ' '+ str(round(lr_ssim,3)), 
-             title2, 
+    titles = [title1, 
+             title2 + ' '+ str(round(lr_ssim,3)), 
              title3 + ' '+ str(round(pred_ssim,3))]
     for i, (img, title) in enumerate(zip(images, titles)):
         plt.subplot(num_row, num_col, i+1)
@@ -188,7 +188,7 @@ def compare_two_models(img_path_list, model1, model2, scale, keep_dim=False, mul
     for i in range(len(img_path_list)):
         if show_ori_img == True:
             show_pred(idx=i, demo_ori_img=demo_ori_img, demo_lr_img=demo_pred_img1, demo_pred_img=demo_pred_img2,\
-                      title1='tained w/ pixel loss(SSIM)', title2='ORI', title3='tained w/ perceptual loss(SSIM)',)
+                      title1='ground truth', title2='tained w/ pixel loss(SSIM)', title3='tained w/ multiloss(SSIM)',)
         else:
             show_pred(idx=i, demo_ori_img=demo_lr_img, demo_lr_img=demo_pred_img1, demo_pred_img=demo_pred_img2,\
-                      title1='tained w/ pixel loss(SSIM)', title2='LR', title3='tained w/ perceptual loss(SSIM)',)
+                      title1='LR', title2='tained w/ pixel loss(SSIM)', title3='tained w/ multiloss(SSIM)',)

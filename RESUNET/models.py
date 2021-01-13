@@ -5,9 +5,13 @@ from tensorflow.keras.layers import Activation, GlobalAveragePooling2D, ZeroPadd
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import get_source_inputs
 from tensorflow.keras import backend as K
+from tensorflow.keras.applications.vgg16 import VGG16
 import tensorflow as tf
 import collections
 import os
+from RESUNET import config as config
+from EDSR import utils as utils
+from EDSR import losses as losses
 
 
 ###### build Unet ######
@@ -46,7 +50,7 @@ def pixel_shuffle(scale):
 
 def SubpixelUpsample2D_block(filters, stage, kernel_size=(3,3), upsample_rate=(2,2),
                      batchnorm=False, skip=None):
-
+    # TODO: double check the implementaion of this subpixel upsampling
     def layer(input_tensor):
         conv_name, bn_name, relu_name, up_name = handle_block_names_old(stage)
 
@@ -74,7 +78,6 @@ def Upsample2D_block(filters, stage, kernel_size=(3,3), upsample_rate=(2,2),
                      batchnorm=False, skip=None):
 
     def layer(input_tensor):
-        # TODO: compare regular upsampling with pixel shuffle upsampling
         conv_name, bn_name, relu_name, up_name = handle_block_names_old(stage)
 
         x = UpSampling2D(size=upsample_rate, name=up_name)(input_tensor)
@@ -471,8 +474,8 @@ def freeze_model(model, train_more):
         if not isinstance(layer, BatchNormalization):
             layer.trainable = False
 
-        if train_more and i > 106:
-            layer.trainable = True
+        # if train_more and i > 106:
+        #     layer.trainable = True
     return
 
 
@@ -491,4 +494,35 @@ def ResUNet(input_shape=(None, None, 3), classes=3, decoder_filters=16,
     if encoder_freeze:
         freeze_model(backbone, train_more)
 
+    return model
+
+
+def build_multiloss_model(trainable_model, crop_size=config.CROP_SIZE):
+    """
+    trainable model will be trained using both MAE and perceptual loss
+    """
+    HR = Input((crop_size, crop_size, 3), name = 'HR')
+    LR = Input((crop_size, crop_size, 3), name = 'LR')
+    SR = trainable_model(LR)
+        
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
+
+    vgg = VGG16(include_top=False, weights='imagenet', input_tensor=Lambda(utils.vgg_preprocess_input)(HR))
+
+    for l in vgg.layers: 
+        l.trainable = False
+
+    # get perceptual\content outputs
+    def get_output(model, layer_name): 
+        return model.get_layer('block{}_conv2'.format(layer_name)).output
+
+    vgg_content = Model(HR, [get_output(vgg, output) for output in [3, 4, 5]], name = 'VGG16')
+    vgg1 = vgg_content(HR) # to extract features of HR
+    vgg2 = vgg_content(SR) # to extract features of SR
+
+    # Perceptual Loss
+    loss_cont = Lambda(losses.content_loss, name = 'Content')(vgg1+vgg2)
+    model = Model([LR, HR], [SR, loss_cont])
+    
     return model
