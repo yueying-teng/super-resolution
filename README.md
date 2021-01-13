@@ -6,6 +6,7 @@ This repo contains the code to carry out the following experimentations:
 
 - EDSR model trained with L1 loss produces better results(measured by SSIM) than that trained with L2 loss.
 - EDSR model finetuned with a mixture of perceptual loss and MAE loss produces results with lower SSIMs but are more visually pleasing.
+- Unet with ImageNet pre-trained Resnet34 as encoder trained using both perceptual and MAE loss
 
 ### Data
 
@@ -17,9 +18,12 @@ EDSR model trained using L1 pixel loss.
 
 ![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/EDSR_MAE.png)
 
-EDSR model finetuned using L1 pixel and perceptual loss.
+EDSR model finetuned using multiloss(L1 pixel and perceptual loss).
 
-![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/EDSR_perceptual.png)
+![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/EDSR_multiloss_fintune.png)
+
+ResUnet model trained using multiloss(L1 pixel and perceptual loss).
+![alt text](https://github.com/yueying-teng/super-resolution/blob/master/img_src/ResUnet_multiloss.png)
 
 Comparison of the two EDSR models(L1 pixel and perceptual loss) above.
 Note that though EDSR model trained using L1 pixel gives higher SSIMs, it does not produce images with as much real texture. e.g. cat whiskers, dog fur.
