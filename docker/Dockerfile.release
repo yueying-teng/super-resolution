@@ -1,6 +1,0 @@
-FROM segm_box_model-image-base
-
-COPY . /work
-WORKDIR /work
-
-ENTRYPOINT ["/bin/bash"]
