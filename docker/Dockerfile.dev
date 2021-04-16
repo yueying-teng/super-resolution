@@ -1,8 +1,0 @@
-FROM segm_box_model-image-base
-
-COPY ./requirements_dev.txt /requirements_dev.txt
-RUN pip install -r /requirements_dev.txt
-
-WORKDIR /work
-
-ENTRYPOINT ["/bin/bash"]
